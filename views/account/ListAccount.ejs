@@ -1,0 +1,380 @@
+<% include ../partials/Header %>
+
+<body>
+	<div class="wrapper">
+		<% include ../partials/RightBar %>
+
+		<div class="main">
+			<% include ../partials/SearchBar %>
+			<main class="content">
+				<!--Form Account-->
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-body">
+							<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addAccountModal">
+								Thêm tài khoản
+							</button>
+							<div class="modal fade" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Thêm Tài Khoản</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<form id="accountForm" enctype="multipart/form-data">
+												<div class="form-row">
+													<div class="form-group col-md-6">
+														<label for="txt_UserName">Tên đăng nhập</label>
+														<input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập">
+													</div>
+													<div class="form-group col-md-6">
+														<label for="txt_Email">Tên đầy đủ </label>
+														<input type="text" class="form-control" id="fullname" name="fullname" placeholder="Nhập tên đầy đủ">
+													</div>
+												</div>
+												<div class="form-group">
+													<h6 class="card-subtitle text-muted">Địa chỉ email</h6></br>
+													<input type="email" class="form-control" name="email" id="email" placeholder="Địa chỉ email">
+												</div>
+												<div class="form-row">
+													<div class="form-group col-md-6">
+														<label for="txt_UserName">Mật khẩu</label>
+														<input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu">
+													</div>
+													<div class="form-group col-md-6">
+														<label for="txt_Email">Nhập lại mật khẩu</label>
+														<input type="password" class="form-control" id="rePassword" name="rePassword" placeholder="Nhập lại mật khẩu">
+													</div>
+												</div>
+												<div class="form-group">
+													<h6 class="card-subtitle text-muted">Địa chỉ</h6></br>
+													<input type="text" class="form-control" id="address" name="address" placeholder="Nhập địa chỉ">
+												</div>
+													<div class="form-group col-md-4">
+														<label for="inputState">Trạng thái</label>
+														<select id="inputState" class="form-control">
+															<option selected>Hoạt Động</option>
+															<option>Khoá</option>
+														</select>
+													</div>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+											<button type="button" id="btnSubmit" onclick="addAccount(event)" name="btnCreate"
+												class="btn btn-success">Thêm mới</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--ListAccount-->
+				<div class="col-12 col-xl-12">
+					<div class="scrollmenu">
+						<div class="card">
+							<div class="card-header">
+								<h5 class="card-title">Danh sách tài khoản</h5>
+								<h6 class="card-subtitle text-muted">Danh sách tài khoản khách hàng.</h6>
+							</div>
+							<table class="table">
+								<thead>
+									<tr>
+										<th style="width:20%;">Tên tài khoản</th>
+										<th style="width:20%">Tên khách hàng</th>
+										<th style="width:20%">Số điện thoại</th>
+										<th class="d-none d-md-table-cell" style="width:20%">Email</th>
+										<th style="width:20%">Ảnh đại diện</th>
+										<th style="width:20%">Địa chỉ</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% for (var i = 0; i < listAccount.length; i++) { %>
+									<tr>
+										<td><%= listAccount[i].username %></td>
+										<td><%= listAccount[i].fullName %></td>
+										<td class="d-none d-md-table-cell"><%= listAccount[i].phone %></td>
+										<td class="d-none d-md-table-cell"><%= listAccount[i].email %></td>
+										<td>
+											<img src="<%= listAccount[i].avatarUrl %>" class="avatar img-fluid" alt="No IMG">
+										</td>
+										<td class="d-none d-md-table-cell"><%= listAccount[i].address %></td>
+										<td class="table-action">
+											<button type="button" name="btn_edit"><i class="align-middle" data-feather="edit-2"></i></button>
+											<button type="button" name="btn_delete"><i class="align-middle" data-feather="trash"></i></button>
+										</td>
+									</tr>
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				
+				</div>
+			
+			</main>
+			<% include ../partials/Footer %>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var addAccount = function (event) {
+			event.preventDefault();
+			var formData = new FormData();
+
+			var username = $('[name=username]').val();
+			var fullname = $('[name=fullname]').val();
+			var email = $('[name=email]').val();
+			var password = $('[name=password]').val();
+			var address = $('[name=address]').val();
+
+			formData.append('username', username);
+			formData.append('fullname', fullname);
+			formData.append('email', email);
+			formData.append('password', password);
+			formData.append('address', address);
+
+			$.ajax({
+				url: 'account/addAccount',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var phanTrang = function (page) {
+			var limit = $("#limit option:selected").text();
+			var formData = new FormData();
+			formData.append('page', page);
+			formData.append('limit', limit);
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr>
+								<td hidden> ${type._id} </td>
+								<td> ${type.typeName} </td>
+								<td> ${type.description}</td>
+								<td>
+									<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+								</td>
+									<td class="table-action">
+										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+										<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+									</td>
+							</tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var editType = function (event) {
+			event.preventDefault();
+
+			var formData = new FormData();
+			var typeId = $('[name=editTypeId]').val();
+			var typeName = $('[name=editTypeName]').val();
+			var des = $('[name=editDescription]').val();
+			var file = $('[name=editTypeImg]').get(0).files;
+
+			formData.append('typeId', typeId);
+			formData.append('imgType', file[0]);
+			formData.append('typeName', typeName);
+			formData.append('description', des);
+
+			$.ajax({
+				url: 'productType/editType',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var deleteType = function (event) {
+			event.preventDefault();
+
+			var formData = new FormData();
+			var typeId = $('[name=typeIdDel]').text();
+
+			formData.append('typeId', typeId);
+
+			$.ajax({
+				url: 'productType/deleteType',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					alert(result.mgs)
+					location.reload()
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		}
+		var loadImg = function (event) {
+			$('#typeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		var loadImgEdit = function (event) {
+			$('#editTypeImgForm').attr('src', URL.createObjectURL(event.target.files[0]));
+		};
+		//Phan trang
+		$('#limit').on('change', function () {
+			var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;
+			var page = 0;
+			var limit = valueSelected;
+			var formData = new FormData();
+			formData.append('page', page);
+			formData.append('limit', limit);
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					$('#countPage').empty();
+					for (var i = 0; i < result.countPage; i++) {
+						$('#countPage').append(`<button type="button" style="background-color:dimgray;" name="ahihi"  value="${i}" onclick="phanTrang(${i})" >${i}</button>`)
+						// $('#countPage1').append(`<button name="pagetype" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+					}
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr>
+								<td hidden> ${type._id} </td>
+								<td> ${type.typeName} </td>
+								<td> ${type.description}</td>
+								<td>
+									<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+								</td>
+									<td class="table-action">
+										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+										<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+									</td>
+							</tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		});
+		$('[name=pagetype]').click(function () {
+			var page = ($(this).val());
+			var limit = $("#limit option:selected").text();
+			var formData = new FormData();
+			formData.append('page', page);
+			formData.append('limit', limit);
+			$.ajax({
+				url: 'productType/getTypePage',
+				type: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+			}).done(function (result) {
+				if (result.success) {
+					$('#bodyTable').empty();
+					// $('#countPage').empty();
+					// for (var i = 0; i < result.countPage; i++) {
+					// 	$('#countPage').append(	`<button  name="pageType" style="background-color:dimgray;" value="${i}" type="button">${i}</button>`)
+					// }
+					for (let type of result.listProductType) {
+						$('#bodyTable').append(
+							`<tr>
+								<td hidden> ${type._id} </td>
+								<td> ${type.typeName} </td>
+								<td> ${type.description}</td>
+								<td>
+									<img src="${type.typeImg}" class="avatar img-fluid" alt="No IMG">
+								</td>
+									<td class="table-action">
+										<button type="button" name="btn_edit" data-toggle="modal" data-target="#editTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+										<button type="button" name="btn_delete" data-toggle="modal" data-target="#DeleteProductTypeModal"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+									</td>
+							</tr>`
+						)
+					}
+				} else {
+					alert(result.mgs)
+				}
+			}).fail(() => {
+				alert("Không kết nối được với server")
+			})
+		});
+		$('[name=btn_edit]').click(function () {
+			var typeId = ($(this).parent().parent().children().eq(0).html());
+			var name = ($(this).parent().parent().children().eq(1).html());
+			var des = ($(this).parent().parent().children().eq(2).html());
+			var img = ($(this).parent().parent().children().eq(3).children().eq(0).attr("src"));
+			$('#editTypeImgForm').attr('src', img);
+			$('[name=editTypeId]').val(typeId);
+			$('[name=editTypeName]').val(name);
+			$('[name=editDescription]').val(des);
+		});
+		$('[name=btn_delete]').click(function () {
+			var typeIdDel = ($(this).parent().parent().children().eq(0).html());
+			var name = ($(this).parent().parent().children().eq(1).html());
+			$('[name=typeIdDel]').text(typeIdDel);
+			$('[name=typeNameDel]').text(name);
+		});
+	</script>
+	<style>
+		div.scrollmenu {
+			background-color: #fff;
+			overflow: auto;
+			white-space: nowrap;
+		}
+	</style>
+	<script src="js/app.js"></script>
+
+</body>
+
+</html>
